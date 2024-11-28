@@ -1,58 +1,64 @@
 #include <iostream>
-#include <fstream>
 #include <string>
+#include <fstream>
+
 using namespace std;
 
-bool LoggingIn(){
-    string username, password, user , pass;
+bool LoggingIn() {
+    string username, password, storedUser, storedPass;
     cout << "Enter username: "; cin >> username;
     cout << "Enter password: "; cin >> password;
-    
-    ifstream read(username + ".txt");
-    getline(read, user);
-    getline(read, pass);
 
-    if(user == username && pass ==password){
-        return true;
+    ifstream read(username + ".txt");
+    
+    if (!read.is_open()) {
+        cout << "User not found!" << endl;
+        return false;
     }
-    else{
+
+    getline(read, storedUser);
+    getline(read, storedPass);
+    
+    if (storedUser == username && storedPass == password) {
+        return true;
+    } else {
         return false;
     }
 }
 
-int main(){
+int main() {
     int choice;
-    cout << "Enter your choice \n1.Register \n2.login\nYOur choice:";
-    cin >> choice;
+    while (true) {
+        cout << "\nEnter your choice:\n1. Registration\n2. Login\n3. Exit\n";
+        cin >> choice;
 
-    if(choice == 1){
-        string username,password;
-        cout << "Enter your username: "; cin >> username;
-        cout << "Enter your password: "; cin >> password;
+        if (choice == 1) {
+            string username, password;
+            cout << "Enter username: "; cin >> username;
+            cout << "Enter password: "; cin >> password;
 
-        ofstream file;
-        file.open(username + ".txt");
-        file << username << endl << password << endl; 
-        file.close();
-
-        main();
-    }
-    else if(choice == 2){
-
-        bool status = LoggingIn();
-        if(!status){
-        cout << "Incorrect Information, Try again!" << endl;
-        system("PAUSE");
-        return 0;
+            ofstream file(username + ".txt");
+            file << username << endl << password;
+            file.close();
+            
+            cout << "Registration successful!\n";
+        } 
+        else if (choice == 2) {
+            if (LoggingIn()) {
+                cout << "Login successful!\n";
+                break; 
+            } else {
+                cout << "Incorrect information! Try again.\n";
+            }
+        } 
+        else if (choice == 3) {
+            cout << "Exiting program.\n";
+            break;
+        } 
+        else {
+            cout << "Invalid choice. Please try again.\n";
         }
-        else{
-        cout << "Login successful" << endl;
-        system("PAUSE");
-        return 1;
-        }
     }
-    else{
-        cout << "Error";
-    }
+
     return 0;
 }
